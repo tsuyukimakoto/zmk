@@ -201,7 +201,7 @@
         &kp TAB     &kp Q                   &kp W                   &kp E                               &kp R                   &kp T               &kp Y           &kp U           &kp I               &kp O       &kp P       &kp LBKT            &kp RBKT            &kp BSLH      
         &kp CLCK    &kp A                   &kp S                   &kp D                               &kp F                   &kp G               &kp H           &kp J           &kp K               &kp L       &kp SEMI    &kp SQT                         &kp RET                                         
         &kp LSHFT   &kp Z                   &kp X                   &kp C                               &kp V                   &kp B               &kp N           &kp M           &kp COMMA           &kp DOT     &kp FSLH                                    &kp RSHFT 
-        &kp LCTRL   &uc LALT                &uc LCMD                       &kp SPACE                                                                                                &uc RCMD            &mo 1       &kp LEFT    &kp UP              &kp DOWN            &kp RIGHT   
+        &kp LCTRL   &uc LALT                &lcmd_eisuu LCMD 0                       &kp SPACE                                                                                                &rcmd_kana RCMD 0            &mo 1       &kp LEFT    &kp UP              &kp DOWN            &kp RIGHT   
         &mo 2       &out OUT_BLE            &out OUT_24G            &out OUT_CHG                        &out OUT_CHGD 
             >;
         };
@@ -252,4 +252,46 @@
 	};
 };
 
-	
+macros {
+
+    /* For "Eisuu" (Alphanumeric) - Sends Control+Shift+; */
+    eisuu_macro: eisuu_macro {
+        compatible = "zmk,behavior-macro";
+        #binding-cells = <0>;
+        label = "EISUU_MACRO";
+        bindings = <&macro_press &kp LCTL &kp LSHFT>,
+	           <&macro_tap &kp SEMI>,
+	           <&macro_release &kp LCTL &kp LSHFT>;
+    };
+
+    /* For "Kana" (Hiragana) - Sends Control+Shift+J */
+    kana_macro: kana_macro {
+        compatible = "zmk,behavior-macro";
+        #binding-cells = <0>;
+        label = "KANA_MACRO";
+        bindings = <&macro_press &kp LCTL &kp LSHFT>,
+	           <&macro_tap &kp J>,
+	           <&macro_release &kp LCTL &kp LSHFT>;
+    };
+};
+
+behaviors {
+    lcmd_eisuu: lcmd_eisuu {
+        compatible = "zmk,behavior-hold-tap";
+        label = "LCMD_EISUU";
+        #binding-cells = <2>;
+        tapping-term-ms = <280>; /* 必要に応じてこの値を調整 */
+        flavor = "hold-preferred"; /* 修飾キーとしてのホールドを優先 */
+        bindings = <&kp>, <&eisuu_macro>;
+    };
+
+    rcmd_kana: rcmd_kana {
+        compatible = "zmk,behavior-hold-tap";
+        label = "RCMD_KANA";
+        #binding-cells = <2>;
+        tapping-term-ms = <280>; /* 必要に応じてこの値を調整 */
+        flavor = "hold-preferred";
+        bindings = <&kp>, <&rcmd_kana_macro>;
+    };
+
+};
